@@ -50,6 +50,19 @@ struct BindingSpec {
     var chord: String { "\(modifiers.rawValue):\(key)" }
     var label: String { modifiers.symbols + LaunchKey.label(key) }
 }
+enum AppCapabilities {
+    // Distribution builds explicitly opt out of reading another process's
+    // preference domain. Direct builds retain their existing behavior.
+    static var automaticDockAccess: Bool {
+        allowsDockPreferences(Bundle.main.object(forInfoDictionaryKey: "DockChordAllowsDockPreferences"))
+    }
+    static func allowsDockPreferences(_ value: Any?) -> Bool {
+        guard let value else { return true }
+        if let flag = value as? Bool { return flag }
+        if let flag = value as? String { return ["yes", "true", "1"].contains(flag.lowercased()) }
+        return false
+    }
+}
 enum DockReader {
     static func targets(from items: [[String: Any]]) -> [AppTarget] {
         items.compactMap { item in
@@ -63,6 +76,7 @@ enum DockReader {
         }
     }
     static func read() -> [AppTarget] {
+        guard AppCapabilities.automaticDockAccess else { return [] }
         CFPreferencesAppSynchronize("com.apple.dock" as CFString)
         let items = CFPreferencesCopyAppValue("persistent-apps" as CFString, "com.apple.dock" as CFString) as? [[String: Any]] ?? []
         return targets(from: items)

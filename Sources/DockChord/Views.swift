@@ -52,15 +52,21 @@ struct SettingsView: View {
     }
     var dockPage: some View {
         VStack(alignment: .leading, spacing: 20) {
+            if !AppCapabilities.automaticDockAccess {
+                Label("Automatic Dock shortcuts are unavailable in this build. Add individual applications in App shortcuts.", systemImage: "info.circle")
+                    .font(.callout).foregroundStyle(.secondary)
+            }
             card {
-                Toggle("Enable numbered Dock shortcuts", isOn: $store.preferences.dockEnabled).font(.headline).toggleStyle(.switch)
+                Toggle("Enable numbered Dock shortcuts", isOn: $store.preferences.dockEnabled).font(.headline).toggleStyle(.switch).disabled(!AppCapabilities.automaticDockAccess)
                 Divider().padding(.vertical, 8)
                 Text("HOLD THESE MODIFIERS + A NUMBER").font(.system(size: 10, weight: .semibold)).tracking(1).foregroundStyle(.secondary)
                 ModifierPicker(value: $store.preferences.modifiers)
                 Text("1–9 open the first nine pinned apps. 0 opens the tenth.").font(.caption).foregroundStyle(.secondary)
             }
             HStack { Text("PINNED IN YOUR DOCK").font(.system(size: 10, weight: .semibold)).tracking(1).foregroundStyle(.secondary); Spacer(); Button { store.refreshDock() } label: { Label("Refresh", systemImage: "arrow.clockwise") }.glassAction() }
-            if store.dockApps.isEmpty {
+            if !AppCapabilities.automaticDockAccess {
+                empty("Make shortcuts your own", detail: "Open App shortcuts to assign a key combination to each application you choose.", icon: "keyboard")
+            } else if store.dockApps.isEmpty {
                 empty("Your Dock is ready for some favorites", detail: "Pin applications to the Dock, then refresh to see their shortcuts.", icon: "dock.rectangle")
             } else {
                 VStack(spacing: 0) {

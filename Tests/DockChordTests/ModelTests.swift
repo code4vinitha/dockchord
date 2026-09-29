@@ -12,7 +12,17 @@ struct ModelTests {
         tests.testDockOrderAndFiltering()
         try tests.testPreferencesRoundTrip()
         tests.testNumberOrderAndChordIdentity()
-        print("Passed 3 model checks: Dock order/filtering, preferences round trip, shortcut identity.")
+        tests.testSandboxDockOptOut()
+        print("Passed 4 model checks: sandbox Dock opt-out, Dock order/filtering, preferences round trip, shortcut identity.")
+    }
+    func testSandboxDockOptOut() {
+        expectFalse(AppCapabilities.allowsDockPreferences(false))
+        expectFalse(AppCapabilities.allowsDockPreferences("NO"))
+        expectFalse(AppCapabilities.allowsDockPreferences("false"))
+        expectFalse(AppCapabilities.allowsDockPreferences("$(UNEXPANDED)"))
+        expectTrue(AppCapabilities.allowsDockPreferences(true))
+        expectTrue(AppCapabilities.allowsDockPreferences("YES"))
+        expectTrue(AppCapabilities.allowsDockPreferences(nil))
     }
     func testDockOrderAndFiltering() {
         func tile(_ path: String) -> [String: Any] { ["tile-type": "file-tile", "tile-data": ["file-data": ["_CFURLString": path]]] }

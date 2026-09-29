@@ -57,3 +57,9 @@ The lightweight test runner works with Command Line Tools alone (no XCTest depen
 ## Refresh the screenshots
 
 Run `./scripts/screenshots.sh` from a macOS desktop session with Screen Recording permission for the invoking terminal or app. It captures the actual app windows, including composited Liquid Glass, with sample data without changing your saved settings, Dock, or registered shortcuts. Images are saved in `docs/screenshots/`.
+
+## App Store sandbox prototype
+
+An Xcode app target and two locally signed sandbox configurations are available. Local probes show that shortcut registration and launching a helper app work in the sandbox. Automatic Dock shortcuts require the experimental read-only Dock preference exception; approval and privacy eligibility remain unresolved.
+
+See [sandbox findings and App Store preparation](docs/app-store-readiness.md) for measured results, limitations, build instructions, and the remaining submission work. This is not an App Store-ready release.

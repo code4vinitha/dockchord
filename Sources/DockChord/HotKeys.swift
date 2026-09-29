@@ -58,7 +58,7 @@ final class LaunchStore: ObservableObject {
         return Array((preferences.includeFinder ? [finder] + dock.filter { $0.url != finder.url } : dock).prefix(10))
     }
     var specs: [BindingSpec] {
-        let numbered = preferences.dockEnabled ? dockApps.enumerated().map { BindingSpec(id: "dock-\($0.offset)", target: $0.element, key: LaunchKey.numbers[$0.offset].code, modifiers: preferences.modifiers) } : []
+        let numbered = preferences.dockEnabled && AppCapabilities.automaticDockAccess ? dockApps.enumerated().map { BindingSpec(id: "dock-\($0.offset)", target: $0.element, key: LaunchKey.numbers[$0.offset].code, modifiers: preferences.modifiers) } : []
         return numbered + preferences.shortcuts.filter(\.enabled).map { BindingSpec(id: $0.id.uuidString, target: $0.target, key: $0.key, modifiers: $0.modifiers) }
     }
     func refreshDock() {
